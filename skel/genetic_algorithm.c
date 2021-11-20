@@ -229,7 +229,6 @@ void run_genetic_algorithm(const sack_object *objects, int object_count, int gen
     {
         cursor = 0;
 
-
         // compute fitness and sort by it
         compute_fitness_function(objects, current_generation, object_count, sack_capacity);
 

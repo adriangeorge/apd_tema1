@@ -222,10 +222,11 @@ void merge(individual *source, int start, int mid, int end, individual *destinat
     int iA = start;
     int iB = mid;
     int i;
-
     for (i = start; i < end; ++i)
     {
-        if (end == iB || (iA < mid && (cmpfunc((void *)&source[iA], (void *)&source[iB]) <= 0)))
+        individual compA = source[iA];
+        individual compB = source[iB];
+        if (end == iB || (iA < mid && (cmpfunc((const void *)&compA, (const void *)&compB) <= 0)))
         {
             destination[i] = source[iA];
             ++iA;
@@ -244,27 +245,27 @@ void mergeSort_paralel(props *g_props, individual *current_generation, individua
     int thread_id = g_props->id;
     int width = 0;
     int i = 0;
-
     // aux obj vector
     individual *aux = NULL;
 
     // implementati aici merge sort paralel
-    for (width = 1; width < g_props->object_count; width *= 2)
+    for (width = 1; width < g_props->next_pow; width *= 2)
     {
-        int piese = g_props->object_count / (2 * width);
+        int piese = g_props->next_pow / (2 * width);
         int start = (thread_id * piese / g_props->num_threads) * 2 * width;
         int end = ((thread_id + 1) * piese) / g_props->num_threads * 2 * width;
 
         for (i = start; i < end; i += 2 * width)
         {
-            merge(current_generation, i, i + width, i + 2 * width, vNew);
+            merge(*g_props->g_curr_gen, i, i + width, i + 2 * width, *g_props->g_vnew);
         }
 
+        pthread_barrier_wait(g_props->b);
         if (thread_id == 0)
         {
-            aux = current_generation;
-            current_generation = vNew;
-            vNew = aux;
+            aux = *g_props->g_curr_gen;
+            *g_props->g_curr_gen = *g_props->g_vnew;
+            *g_props->g_vnew = aux;
         }
 
         pthread_barrier_wait(g_props->b);
@@ -314,8 +315,12 @@ void *run_genetic_algorithm_par(void *genetic_props)
         //     qsort(current_generation, object_count, sizeof(individual), cmpfunc);
 
         mergeSort_paralel(g_props, current_generation, g_props->vNew);
-
         pthread_barrier_wait(g_props->b);
+        // for (int i = 0; i < g_props->object_count; i++)
+        // {
+        //     printf("%d %d | ", current_generation[i].fitness, current_generation[i].index);
+        // }
+        // printf("\n");
 
         // keep first 30% children (elite children selection)
         count = object_count * 3 / 10;
@@ -352,9 +357,9 @@ void *run_genetic_algorithm_par(void *genetic_props)
         if (g_props->id >= g_props->num_threads / 2)
         {
             // mutate next 20% children with the second version of bit string mutation
-            // int off_id = g_props->id - (g_props->num_threads / 2);
-            // start = off_id * (double)count / (g_props->num_threads / 2);
-            // end = min((off_id + 1) * (double)count / (g_props->num_threads / 2), count);
+            int off_id = g_props->id - (g_props->num_threads / 2);
+            start = off_id * (double)count / (g_props->num_threads / 2);
+            end = min((off_id + 1) * (double)count / (g_props->num_threads / 2), count);
             for (int i = start; i < end; ++i)
             {
                 copy_individual(current_generation + i + count, next_generation + cursor + i);
@@ -366,7 +371,7 @@ void *run_genetic_algorithm_par(void *genetic_props)
         // crossover first 30% parents with one-point crossover
         // (if there is an odd number of parents, the last one is kept as such)
         count = object_count * 3 / 10;
-
+        pthread_barrier_wait(g_props->b);
         if (count % 2 == 1)
         {
             copy_individual(current_generation + object_count - 1, next_generation + cursor + count - 1);

@@ -34,6 +34,11 @@ typedef struct _props
     individual *next_generation;
     individual *vNew;
     individual *tmp;
+
+    //global behaviour for curr_gen and vnew arrays
+    individual **g_curr_gen;
+    individual **g_vnew;
+    int next_pow;
 } props;
 
 // reads input from a given file

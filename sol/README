@@ -1,12 +1,14 @@
-sdfsdgdfbfbdfg
-dfg
-dfgdfg
+334CC Cioban George-Adrian
+Tema 01 - Algoritmi Paraleli si Distribuiti
 
-dfgdfgfg
+Idei principale:
+    1. Paralelizarea a cat mai multor bucle for este posibil dar in acelasi 
+    timp evitand creearea unui overhead pe procesor prin context switching.
 
-dfgdfgfgfgd
-fgd
-gf
-gffg
-fgdfgd
-fgdfgdgd
+    2. Folosirea unui algoritm paralel de sortare al indivizilor, mai
+    precis Merge Sort-ul din laboratorul 3.
+
+Resurse:
+    
+
+
