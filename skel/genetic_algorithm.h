@@ -1,8 +1,8 @@
 #ifndef GENETIC_ALGORITHM_H
 #define GENETIC_ALGORITHM_H
 
-#include "sack_object.h"
 #include "individual.h"
+#include "sack_object.h"
 
 // reads input from a given file
 int read_input(sack_object **objects, int *object_count, int *sack_capacity, int *generations_count, int argc, char *argv[]);

@@ -3,15 +3,15 @@
 
 build:
 	@echo "Building..."
-	@gcc -o test test.c -lm -Wall -Werror
+	@gcc -o tema1_par par_tema1.c par_genetic_algorithm.c -lm -Wall -Werror -lpthread
 	@echo "Done"
 
 build_debug:
 	@echo "Building debug..."
-	@gcc -o main main.c -lm -Wall -Werror -O0 -g3 -DDEBUG
+	@gcc -o tema1_par par_tema1.c par_genetic_algorithm.c -lm -Wall -Werror -O0 -g -g3 -DDEBUG -lpthread
 	@echo "Done"
 
 clean:
 	@echo "Cleaning..."
-	@rm -rf test
+	@rm -rf par_tema1
 	@echo "Done"
