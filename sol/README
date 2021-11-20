@@ -1,14 +1,35 @@
 334CC Cioban George-Adrian
 Tema 01 - Algoritmi Paraleli si Distribuiti
 
+Timp de implementare: Aproximativ 2 zile de lucru intermitent
+
 Idei principale:
-    1. Paralelizarea a cat mai multor bucle for este posibil dar in acelasi 
-    timp evitand creearea unui overhead pe procesor prin context switching.
+
+    0. Pentru inceput am folosit functiile din biblioteca "time.h" pentru a vedea care operatii
+    au cel mai mare impact din puncte de vedere al timpului rularii [R3]
+
+    1. Paralelizarea a cat mai multor bucle for a fost posibil tinand insa cont sa evit
+    creearea unui overhead pe procesor prin context switching des, astfel eliminand potentialele
+    beneficii aduse de paralelizare.
 
     2. Folosirea unui algoritm paralel de sortare al indivizilor, mai
-    precis Merge Sort-ul din laboratorul 3.
+    precis Merge Sort-ul din laboratorul 3[R1]. Pentru a trece peste limitarea
+    algoritmului de a lucra cu un numar de elemente egal cu o putere a lui 2
+    am marit array-ul de indivizi, rotunjind pana la urmatoarea putere a lui
+    2 [R2] si completand elementele noi cu 0. Pentru a trece peste limitarea
+    de a nu folosi variabile globale am tinut in structura de props (argumentele
+    pentru functia paralelizata) referinte la array-urile necesare sortarii
+
+    3. Majoritatea functiilor depind de functiile precedente cu exceptia celor
+    pentru mutatii, pentru acestea am putut atribui jumatate din thread urile 
+    disponibile pentru fiecare, astfel am observat o imbunatatire fata de o simpla
+    paralelizare a for-urilor din functii.
+
 
 Resurse:
-    
+    R1 : https://ocw.cs.pub.ro/courses/apd/laboratoare/03
+    R2 : https://stackoverflow.com/questions/466204/rounding-up-to-next-power-of-2
+    R3 : https://stackoverflow.com/questions/2962785/c-using-clock-to-measure-time-in-multi-threaded-programs
+
 
 

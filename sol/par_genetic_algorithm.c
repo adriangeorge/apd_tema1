@@ -148,8 +148,6 @@ void mutate_bit_string_1(const individual *ind, int generation_index, props *g_p
     {
         // for even-indexed individuals, mutate the first 40% chromosomes by a given step
         mutation_size = ind->chromosome_length * 4 / 10;
-        // offset thread ids by half (negative) of thread count
-
         int start = g_props->id * (double)mutation_size / (g_props->num_threads / 2);
         int end = min((g_props->id + 1) * (double)mutation_size / (g_props->num_threads / 2), mutation_size);
         for (i = start; i < end; i += step)
@@ -239,16 +237,15 @@ void merge(individual *source, int start, int mid, int end, individual *destinat
     }
 }
 
+// preluata din laborator
 void mergeSort_paralel(props *g_props, individual *current_generation, individual *vNew)
 {
 
     int thread_id = g_props->id;
     int width = 0;
     int i = 0;
-    // aux obj vector
-    individual *aux = NULL;
 
-    // implementati aici merge sort paralel
+    individual *aux = NULL;
     for (width = 1; width < g_props->next_pow; width *= 2)
     {
         int piese = g_props->next_pow / (2 * width);
@@ -310,17 +307,8 @@ void *run_genetic_algorithm_par(void *genetic_props)
         compute_fitness_function(objects, current_generation, object_count, sack_capacity, g_props);
         pthread_barrier_wait(g_props->b);
 
-        // TODO: Replace qsort with parallel merge sort
-        // if (g_props->id == 0)
-        //     qsort(current_generation, object_count, sizeof(individual), cmpfunc);
-
         mergeSort_paralel(g_props, current_generation, g_props->vNew);
         pthread_barrier_wait(g_props->b);
-        // for (int i = 0; i < g_props->object_count; i++)
-        // {
-        //     printf("%d %d | ", current_generation[i].fitness, current_generation[i].index);
-        // }
-        // printf("\n");
 
         // keep first 30% children (elite children selection)
         count = object_count * 3 / 10;
@@ -333,15 +321,10 @@ void *run_genetic_algorithm_par(void *genetic_props)
         cursor = count;
         pthread_barrier_wait(g_props->b);
 
-        // start = g_props->id * (double)count / g_props->num_threads;
-        // end = min((g_props->id + 1) * (double)count / g_props->num_threads, count);
-
         count = object_count * 2 / 10;
         if (g_props->id < g_props->num_threads / 2)
         {
             // mutate first 20% children with the first version of bit string mutation
-            // start = g_props->id * (double)count / (g_props->num_threads / 2);
-            // end = min((g_props->id + 1) * (double)count / (g_props->num_threads / 2), count);
             for (int i = start; i < end; ++i)
             {
                 copy_individual(current_generation + i, next_generation + cursor + i);
@@ -349,9 +332,6 @@ void *run_genetic_algorithm_par(void *genetic_props)
             }
         }
         cursor += count;
-
-        // start = g_props->id * (double)count / g_props->num_threads;
-        // end = min((g_props->id + 1) * (double)count / g_props->num_threads, count);
 
         count = object_count * 2 / 10;
         if (g_props->id >= g_props->num_threads / 2)

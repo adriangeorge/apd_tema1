@@ -9,9 +9,6 @@ pthread_barrier_t barrier;
 
 int main(int argc, char *argv[])
 {
-    struct timespec start_c, finish_c;
-    double elapsed;
-    clock_gettime(CLOCK_MONOTONIC, &start_c);
     props common_props;
 
     if (!read_input(&common_props, argc, argv))
@@ -64,10 +61,5 @@ int main(int argc, char *argv[])
             exit(-1);
         }
     }
-
-    clock_gettime(CLOCK_MONOTONIC, &finish_c);
-    elapsed = (finish_c.tv_sec - start_c.tv_sec);
-    elapsed += (finish_c.tv_nsec - start_c.tv_nsec) / 1000000000.0;
-    //printf("Time : %f\n", elapsed);
     return 0;
 }
